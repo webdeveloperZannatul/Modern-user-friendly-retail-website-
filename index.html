@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Remote Control Co. | Replacement TV & Air Conditioner Remotes</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap');
+
+    :root{
+      --bg:#f7fbff;
+      --bg-soft:#edf7ff;
+      --cream:#fff7ef;
+      --surface:rgba(255,255,255,.84);
+      --surface-strong:#ffffff;
+      --text:#17304a;
+      --muted:#5c6f84;
+      --brand:#0d79bd;
+      --brand-2:#21a6d8;
+      --accent:#f68a2d;
+      --accent-2:#ffb06a;
+      --line:rgba(13,121,189,.12);
+      --shadow:0 24px 60px rgba(19,48,74,.12);
+      --radius:28px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      overflow-x:hidden;
+      font-family:'Manrope',sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(33,166,216,.14), transparent 30%),
+        radial-gradient(circle at 100% 12%, rgba(246,138,45,.12), transparent 20%),
+        linear-gradient(180deg, #fbfdff 0%, #f5f9fd 100%);
+      line-height:1.55;
+    }
+
+    body.menu-open{overflow:hidden}
+    a{text-decoration:none;color:inherit}
+    img{display:block;max-width:100%}
+    button,input,textarea,select{font:inherit}
+    :focus-visible{outline:3px solid rgba(33,166,216,.28);outline-offset:2px}
+    section[id]{scroll-margin-top:100px}
+
+    .container{width:min(1180px, calc(100% - 2rem)); margin:0 auto}
+
+    .topbar{
+      background:linear-gradient(90deg, var(--brand), #1690ca);
+      color:#fff;
+      position:relative;
+      z-index:40;
+    }
+    .topbar-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem 2rem;
+      padding:.72rem 0;
+      flex-wrap:wrap;
+    }
+    .topbar-note{
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+    .topbar-contact{
+      display:flex;
+      align-items:center;
+      gap:1rem 1.4rem;
+      flex-wrap:wrap;
+    }
+    .topbar-contact a{
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(255,255,255,.52);
+      transition:background .25s ease, box-shadow .25s ease;
+    }
+    .site-header.scrolled{
+      background:rgba(255,255,255,.92);
+      box-shadow:0 14px 40px rgba(19,48,74,.08);
+    }
+
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem;
+      padding:1rem 0;
+      position:relative;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      min-width:0;
+    }
+    .brand img{
+      height:56px;
+      width:auto;
+      filter:drop-shadow(0 8px 20px rgba(19,48,74,.08));
+    }
+
+    .nav-links{
+      display:flex;
+      align-items:center;
+      gap:1.25rem;
+      flex-wrap:wrap;
+    }
+    .nav-links a{
+      font-weight:800;
+      color:var(--muted);
+      position:relative;
+      padding:.2rem 0;
+      transition:color .2s ease;
+    }
+    .nav-links a::after{
+      content:"";
+      position:absolute;
+      left:0;
+      bottom:-.2rem;
+      width:100%;
+      height:2px;
+      transform:scaleX(0);
+      transform-origin:left;
+      background:linear-gradient(90deg, var(--brand), var(--accent));
+      transition:transform .25s ease;
+    }
+    .nav-links a:hover{color:var(--brand)}
+    .nav-links a:hover::after{transform:scaleX(1)}
+
+    .call-pill,
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:.65rem;
+      border-radius:999px;
+      font-weight:800;
+      transition:transform .22s ease, box-shadow .22s ease, background .22s ease;
+      border:1px solid transparent;
+      cursor:pointer;
+    }
+    .call-pill{
+      padding:.88rem 1.15rem;
+      background:#fff;
+      border-color:var(--line);
+      box-shadow:0 16px 34px rgba(19,48,74,.09);
+      color:var(--brand);
+      white-space:nowrap;
+    }
+    .call-pill:hover,
+    .btn:hover{transform:translateY(-2px)}
+
+    .menu-toggle{
+      display:none;
+      width:48px;
+      height:48px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 10px 24px rgba(19,48,74,.08);
+      cursor:pointer;
+    }
+    .menu-toggle span,
+    .menu-toggle span::before,
+    .menu-toggle span::after{
+      content:"";
+      display:block;
+      width:20px;
+      height:2px;
+      border-radius:999px;
+      background:currentColor;
+      position:relative;
+      transition:transform .25s ease, opacity .25s ease;
+    }
+    .menu-toggle span::before{position:absolute; top:-6px; left:0}
+    .menu-toggle span::after{position:absolute; top:6px; left:0}
+    .menu-toggle.active span{background:transparent}
+    .menu-toggle.active span::before{transform:translateY(6px) rotate(45deg)}
+    .menu-toggle.active span::after{transform:translateY(-6px) rotate(-45deg)}
+
+    .mobile-panel{
+      display:none;
+      max-height:0;
+      overflow:hidden;
+      transition:max-height .3s ease;
+    }
+    .mobile-panel.open{max-height:360px}
+    .mobile-panel .panel-inner{
+      display:grid;
+      gap:.25rem;
+      padding:0 0 1rem;
+    }
+    .mobile-panel a{
+      font-weight:800;
+      color:var(--muted);
+      padding:.9rem 0;
+      border-bottom:1px solid var(--line);
+    }
+
+    .hero{
+      position:relative;
+      min-height:calc(100svh - 104px);
+      display:flex;
+      align-items:center;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg, rgba(252,254,255,.92) 0%, rgba(252,254,255,.76) 35%, rgba(252,254,255,.26) 70%, rgba(252,254,255,.14) 100%),
+        url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1800&q=80') center/cover no-repeat;
+      transform:scale(1.05);
+      z-index:-2;
+      animation:heroDrift 22s ease-in-out infinite alternate;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 18% 24%, rgba(255,255,255,.34), transparent 28%),
+        radial-gradient(circle at 86% 24%, rgba(33,166,216,.16), transparent 18%),
+        radial-gradient(circle at 76% 72%, rgba(246,138,45,.14), transparent 18%);
+      z-index:-1;
+    }
+    .hero-inner{
+      display:grid;
+      grid-template-columns:1.02fr .98fr;
+      align-items:center;
+      gap:2rem;
+      padding:4.6rem 0 3.8rem;
+    }
+    .hero-copy{max-width:640px}
+    .hero-logo{
+      width:min(420px, 80vw);
+      margin:0 0 1.1rem;
+      filter:drop-shadow(0 18px 34px rgba(19,48,74,.12));
+    }
+    .hero h1{
+      margin:0 0 1rem;
+      font-family:'Sora',sans-serif;
+      font-weight:800;
+      letter-spacing:-.045em;
+      line-height:1.02;
+      font-size:clamp(2.2rem, 4vw, 3.45rem);
+      max-width:12ch;
+    }
+    .hero p{
+      margin:0 0 1.8rem;
+      font-size:clamp(1rem, 1.35vw, 1.16rem);
+      color:var(--muted);
+      max-width:34rem;
+    }
+    .cta-group{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.9rem;
+    }
+    .btn{
+      padding:1rem 1.35rem;
+    }
+    .btn.primary{
+      background:linear-gradient(135deg, var(--accent), #ff9a45);
+      color:#fff;
+      box-shadow:0 18px 40px rgba(246,138,45,.28);
+    }
+    .btn.secondary{
+      background:rgba(255,255,255,.88);
+      color:var(--brand);
+      border-color:rgba(255,255,255,.74);
+      box-shadow:0 18px 36px rgba(19,48,74,.10);
+    }
+    .btn.small{padding:.85rem 1.08rem;font-size:.95rem}
+
+    .hero-visual{
+      position:relative;
+      min-height:560px;
+    }
+    .hero-visual::before{
+      content:"";
+      position:absolute;
+      inset:14% 6% 8% 18%;
+      background:radial-gradient(circle, rgba(255,255,255,.96) 0%, rgba(255,255,255,.3) 46%, transparent 72%);
+      border-radius:50%;
+      filter:blur(8px);
+    }
+    .hero-visual img{
+      position:absolute;
+      width:auto;
+      height:auto;
+      filter:drop-shadow(0 26px 44px rgba(19,48,74,.2));
+    }
+    .hero-visual .tv-hero{
+      width:min(360px, 42vw);
+      right:18%;
+      bottom:2%;
+      animation:floatY 6.5s ease-in-out infinite;
+    }
+    .hero-visual .ac-hero{
+      width:min(430px, 48vw);
+      right:-2%;
+      top:-2%;
+      transform:rotate(-6deg);
+      animation:floatYAlt 8s ease-in-out infinite;
+    }
+
+    .section{padding:5.5rem 0; position:relative}
+    .section-heading{
+      max-width:720px;
+      margin-bottom:2.2rem;
+    }
+    .eyebrow{
+      display:inline-block;
+      margin:0 0 .8rem;
+      font-family:'Sora',sans-serif;
+      font-size:.84rem;
+      font-weight:800;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--brand);
+    }
+    .section-heading h2,
+    .experience-copy h2,
+    .contact-copy h2{
+      margin:0 0 .7rem;
+      font-family:'Sora',sans-serif;
+      font-weight:800;
+      letter-spacing:-.045em;
+      line-height:1.06;
+      font-size:clamp(1.95rem, 3vw, 2.8rem);
+    }
+    .section-heading p,
+    .experience-copy p,
+    .contact-copy p{
+      margin:0;
+      color:var(--muted);
+      font-size:1.03rem;
+    }
+
+    .order-section{
+      background:
+        linear-gradient(180deg, rgba(237,247,255,.9), rgba(255,248,240,.92));
+    }
+    .order-wrap{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:2.4rem;
+      align-items:center;
+    }
+    .form-shell,
+    .contact-form{
+      background:var(--surface);
+      border:1px solid rgba(255,255,255,.7);
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+      padding:1.35rem;
+      backdrop-filter:blur(14px);
+    }
+    .segmented{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:.45rem;
+      padding:.45rem;
+      background:rgba(13,121,189,.07);
+      border-radius:18px;
+      margin-bottom:1rem;
+    }
+    .segmented button{
+      border:0;
+      background:transparent;
+      padding:.85rem .7rem;
+      border-radius:14px;
+      font-weight:800;
+      color:var(--muted);
+      cursor:pointer;
+      transition:background .22s ease, color .22s ease, box-shadow .22s ease;
+    }
+    .segmented button.active{
+      background:#fff;
+      color:var(--text);
+      box-shadow:0 10px 24px rgba(19,48,74,.08);
+    }
+
+    .form-grid{
+      display:grid;
+      gap:1rem;
+    }
+    .field label{
+      display:block;
+      margin:0 0 .45rem;
+      font-size:.95rem;
+      font-weight:800;
+    }
+    .field input,
+    .field textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      color:var(--text);
+      padding:1rem;
+      resize:vertical;
+      min-height:56px;
+      transition:border-color .2s ease, box-shadow .2s ease;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
+    }
+    .field textarea{min-height:120px}
+    .field input:focus,
+    .field textarea:focus{
+      border-color:rgba(13,121,189,.35);
+      box-shadow:0 0 0 4px rgba(13,121,189,.08);
+      outline:none;
+    }
+    .form-foot{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem;
+      flex-wrap:wrap;
+      padding-top:.25rem;
+    }
+    .helper-link{
+      font-weight:800;
+      color:var(--brand);
+    }
+    .response,
+    .contact-response{
+      display:none;
+      margin-top:1rem;
+      padding:1rem 1.1rem;
+      border-radius:18px;
+      border:1px solid rgba(13,121,189,.12);
+      background:linear-gradient(180deg, #f4fbff, #fff8ef);
+    }
+    .response.show,
+    .contact-response.show{
+      display:block;
+      animation:fadeUp .32s ease both;
+    }
+    .response strong,
+    .contact-response strong{display:block;margin-bottom:.3rem}
+    .response-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.75rem;
+      margin-top:.9rem;
+    }
+
+    .order-visual{
+      display:grid;
+      gap:1.25rem;
+      align-items:center;
+    }
+    .order-media{
+      position:relative;
+      min-height:430px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .order-media::before{
+      content:"";
+      position:absolute;
+      inset:8% 12%;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(33,166,216,.18), rgba(33,166,216,.04) 56%, transparent 72%);
+    }
+    .order-media img{
+      max-height:390px;
+      width:auto;
+      object-fit:contain;
+      filter:drop-shadow(0 24px 40px rgba(19,48,74,.16));
+      animation:gentleFloat 7s ease-in-out infinite;
+      transition:opacity .25s ease, transform .35s ease;
+    }
+    .order-copy h3{
+      margin:0 0 .55rem;
+      font-family:'Sora',sans-serif;
+      font-size:1.52rem;
+      letter-spacing:-.03em;
+    }
+    .order-copy p{
+      margin:0 0 .9rem;
+      color:var(--muted);
+    }
+
+    .help-layout{
+      display:grid;
+      grid-template-columns:1.06fr .94fr;
+      gap:2.4rem;
+      align-items:center;
+    }
+    .finder-stage{
+      position:relative;
+      min-height:480px;
+      overflow:hidden;
+      border-radius:34px;
+      box-shadow:var(--shadow);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.92), rgba(255,255,255,.55) 36%, transparent 42%),
+        linear-gradient(180deg, #ebf7ff 0%, #fff7ef 100%);
+    }
+    .scene{
+      position:absolute;
+      inset:0;
+      opacity:0;
+      visibility:hidden;
+      transition:opacity .38s ease, visibility .38s ease;
+    }
+    .scene.active{opacity:1;visibility:visible}
+    .scene-remote{
+      position:absolute;
+      right:4%;
+      bottom:5%;
+      width:42%;
+      max-width:320px;
+      filter:drop-shadow(0 22px 38px rgba(19,48,74,.18));
+    }
+
+    .tv-frame{
+      position:absolute;
+      left:8%;
+      top:15%;
+      width:58%;
+      height:48%;
+      border-radius:22px;
+      background:#253c59;
+      box-shadow:inset 0 0 0 12px #3c5677, 0 20px 40px rgba(19,48,74,.14);
+    }
+    .tv-screen{
+      position:absolute;
+      inset:14px;
+      border-radius:14px;
+      background:linear-gradient(135deg, #a9d6ff 0%, #f5fbff 52%, #ffe7c8 100%);
+    }
+    .tv-stand{
+      position:absolute;
+      left:28%;
+      top:63%;
+      width:18%;
+      height:5px;
+      border-radius:999px;
+      background:#415d80;
+    }
+    .tv-base{
+      position:absolute;
+      left:24%;
+      top:65%;
+      width:26%;
+      height:12px;
+      border-radius:999px;
+      background:#547092;
+    }
+
+    .ac-unit{
+      position:absolute;
+      left:10%;
+      top:16%;
+      width:62%;
+      height:26%;
+      border-radius:24px;
+      background:linear-gradient(180deg, #ffffff, #edf6fb);
+      box-shadow:0 20px 40px rgba(19,48,74,.10);
+    }
+    .ac-unit::before{
+      content:"";
+      position:absolute;
+      left:7%;
+      right:7%;
+      bottom:22%;
+      height:8%;
+      border-radius:999px;
+      background:linear-gradient(90deg, #e6eef5, #f7fbff);
+    }
+    .ac-vent{
+      position:absolute;
+      left:7%;
+      right:7%;
+      bottom:10%;
+      height:13%;
+      border-radius:999px;
+      background:repeating-linear-gradient(90deg, #dfe7f1 0 12px, #fafdff 12px 18px);
+    }
+
+    .sticker{
+      position:absolute;
+      width:120px;
+      height:50px;
+      border-radius:12px;
+      background:#fff;
+      box-shadow:0 14px 28px rgba(19,48,74,.12);
+    }
+    .sticker::before,
+    .sticker::after{
+      content:"";
+      position:absolute;
+      left:12px;
+      right:12px;
+      height:4px;
+      border-radius:999px;
+      background:#d5dfeb;
+    }
+    .sticker::before{top:14px}
+    .sticker::after{top:26px;width:60%}
+    .tv-sticker{right:22%;top:45%}
+    .ac-sticker{right:11%;top:13%}
+
+    .scene-callout{
+      position:absolute;
+      left:1.2rem;
+      bottom:1.2rem;
+      max-width:300px;
+      background:rgba(255,255,255,.86);
+      border:1px solid rgba(255,255,255,.72);
+      border-radius:20px;
+      padding:1rem 1rem;
+      box-shadow:0 16px 34px rgba(19,48,74,.10);
+      backdrop-filter:blur(14px);
+      color:var(--text);
+      font-weight:700;
+    }
+
+    .help-controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.75rem;
+      margin-bottom:1rem;
+    }
+    .help-controls button{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--muted);
+      border-radius:999px;
+      padding:.88rem 1.1rem;
+      font-weight:800;
+      cursor:pointer;
+      transition:background .22s ease, color .22s ease, transform .22s ease;
+      box-shadow:0 10px 24px rgba(19,48,74,.05);
+    }
+    .help-controls button.active{
+      background:var(--brand);
+      color:#fff;
+      transform:translateY(-1px);
+    }
+    .help-text h3{
+      margin:0 0 .55rem;
+      font-family:'Sora',sans-serif;
+      font-size:1.48rem;
+      letter-spacing:-.03em;
+    }
+    .help-text p{
+      margin:0 0 1rem;
+      color:var(--muted);
+    }
+    .help-list{
+      list-style:none;
+      padding:0;
+      margin:0;
+      display:grid;
+      gap:.9rem;
+    }
+    .help-list li{
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:.8rem;
+      align-items:flex-start;
+      color:var(--muted);
+    }
+    .help-list .num{
+      width:1.9rem;
+      height:1.9rem;
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      background:rgba(13,121,189,.08);
+      color:var(--brand);
+      font-weight:800;
+      flex:0 0 auto;
+    }
+
+    .range-section{
+      background:linear-gradient(180deg, rgba(255,248,240,.7), rgba(255,255,255,.94));
+    }
+    .range-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:2rem;
+      align-items:start;
+    }
+    .range-item{
+      display:grid;
+      gap:1rem;
+    }
+    .range-figure{
+      position:relative;
+      min-height:320px;
+      border-radius:32px;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 50% 24%, rgba(33,166,216,.16), transparent 36%),
+        linear-gradient(180deg, rgba(255,255,255,.68), rgba(240,247,255,.58));
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding:1.2rem;
+    }
+    .range-figure img{
+      max-height:280px;
+      width:auto;
+      object-fit:contain;
+      filter:drop-shadow(0 22px 34px rgba(19,48,74,.16));
+      transition:transform .3s ease;
+    }
+    .range-item:hover .range-figure img{transform:translateY(-8px) scale(1.02)}
+    .range-item h3{
+      margin:0;
+      font-family:'Sora',sans-serif;
+      font-size:1.34rem;
+      letter-spacing:-.03em;
+    }
+    .range-item p{
+      margin:0;
+      color:var(--muted);
+    }
+    .range-item a{
+      width:max-content;
+      font-weight:800;
+      color:var(--brand);
+      text-decoration:underline;
+      text-decoration-thickness:2px;
+      text-underline-offset:4px;
+    }
+
+    .experience{
+      overflow:hidden;
+    }
+    .experience-wrap{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:2.4rem;
+      align-items:center;
+    }
+    .stack-stage{
+      position:relative;
+      min-height:430px;
+      border-radius:34px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      background:
+        radial-gradient(circle at 24% 24%, rgba(255,255,255,.9), transparent 28%),
+        linear-gradient(180deg, #edf8ff, #fff7ef);
+    }
+    .stack-stage .img-main{
+      position:absolute;
+      left:5%;
+      bottom:0;
+      width:78%;
+      max-height:100%;
+      object-fit:contain;
+      filter:drop-shadow(0 24px 38px rgba(19,48,74,.16));
+    }
+    .stack-stage .img-alt{
+      position:absolute;
+      right:4%;
+      top:9%;
+      width:36%;
+      max-height:64%;
+      object-fit:contain;
+      filter:drop-shadow(0 22px 36px rgba(19,48,74,.15));
+      animation:floatYAlt 8s ease-in-out infinite;
+    }
+    .years{
+      margin:0 0 .6rem;
+      font-family:'Sora',sans-serif;
+      font-weight:800;
+      font-size:clamp(3rem, 7vw, 5.4rem);
+      line-height:.9;
+      letter-spacing:-.06em;
+      color:var(--brand);
+    }
+    .years small{
+      font-size:.36em;
+      color:var(--accent);
+      vertical-align:top;
+      margin-left:.12rem;
+    }
+
+    .contact{
+      background:
+        radial-gradient(circle at 100% 10%, rgba(33,166,216,.12), transparent 22%),
+        linear-gradient(180deg, rgba(255,248,240,.86), rgba(238,247,255,.92));
+    }
+    .contact-wrap{
+      display:grid;
+      grid-template-columns:.9fr 1.1fr;
+      gap:2.4rem;
+      align-items:start;
+    }
+    .contact-lockup{
+      width:min(280px, 72%);
+      margin:0 0 1rem;
+      filter:drop-shadow(0 14px 26px rgba(19,48,74,.10));
+    }
+    .direct-links{
+      display:grid;
+      gap:1rem;
+      margin:1.4rem 0 1.5rem;
+    }
+    .direct-links a{
+      display:block;
+      font-family:'Sora',sans-serif;
+      font-weight:800;
+      font-size:clamp(1.2rem, 2vw, 1.8rem);
+      letter-spacing:-.035em;
+    }
+    .direct-links span{
+      display:block;
+      margin-bottom:.18rem;
+      font-size:.78rem;
+      font-weight:800;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--brand);
+    }
+    .contact-form .form-grid{
+      grid-template-columns:repeat(2,1fr);
+      gap:1rem;
+    }
+    .contact-form .full{grid-column:1/-1}
+    .contact-form h3{
+      margin:.1rem 0 1rem;
+      font-family:'Sora',sans-serif;
+      font-size:1.36rem;
+      letter-spacing:-.03em;
+    }
+
+    .site-footer{
+      border-top:1px solid var(--line);
+      background:linear-gradient(180deg, #f2f8fd, #f8fbff);
+      padding:2.6rem 0 3rem;
+    }
+    .footer-grid{
+      display:grid;
+      grid-template-columns:1.15fr .75fr .8fr;
+      gap:1.8rem;
+      align-items:start;
+    }
+    .footer-brand img{
+      height:62px;
+      width:auto;
+      margin-bottom:.8rem;
+    }
+    .footer-brand p,
+    .footer-links a,
+    .footer-contact a,
+    .footer-meta{
+      color:var(--muted);
+    }
+    .footer-brand p{margin:0;max-width:38ch}
+    .footer-title{
+      margin:0 0 .8rem;
+      font-family:'Sora',sans-serif;
+      font-size:1rem;
+      font-weight:700;
+    }
+    .footer-links,
+    .footer-contact{
+      display:grid;
+      gap:.7rem;
+    }
+    .footer-links a,
+    .footer-contact a{
+      font-weight:700;
+    }
+    .footer-bottom{
+      margin-top:1.6rem;
+      padding-top:1.3rem;
+      border-top:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      gap:1rem;
+      flex-wrap:wrap;
+    }
+
+    .mobile-bar{
+      display:none;
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:60;
+      padding:.75rem 1rem calc(.8rem + env(safe-area-inset-bottom));
+      background:rgba(255,255,255,.94);
+      backdrop-filter:blur(18px);
+      border-top:1px solid var(--line);
+      gap:.75rem;
+    }
+    .mobile-bar .btn{flex:1}
+
+    .reveal{
+      opacity:0;
+      transform:translateY(28px);
+      transition:opacity .6s ease, transform .6s ease;
+    }
+    .reveal.revealed{
+      opacity:1;
+      transform:none;
+    }
+
+    @keyframes heroDrift{
+      0%{transform:scale(1.04) translate3d(0,0,0)}
+      100%{transform:scale(1.1) translate3d(-1.5%, 1%, 0)}
+    }
+    @keyframes floatY{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-14px)}
+    }
+    @keyframes floatYAlt{
+      0%,100%{transform:translateY(0) rotate(-5deg)}
+      50%{transform:translateY(-16px) rotate(-1deg)}
+    }
+    @keyframes gentleFloat{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-10px)}
+    }
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(12px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    @media (max-width: 1080px){
+      .hero-inner,
+      .order-wrap,
+      .help-layout,
+      .experience-wrap,
+      .contact-wrap,
+      .footer-grid{
+        grid-template-columns:1fr;
+      }
+      .hero{
+        min-height:auto;
+      }
+      .hero-inner{
+        padding:4.2rem 0 3rem;
+      }
+      .hero-copy{
+        max-width:none;
+      }
+      .hero-visual{
+        min-height:420px;
+        max-width:640px;
+        width:100%;
+        margin:0 auto;
+      }
+      .order-media,
+      .finder-stage,
+      .stack-stage{
+        min-height:400px;
+      }
+    }
+
+    @media (max-width: 860px){
+      .nav-links,
+      .call-pill{
+        display:none;
+      }
+      .menu-toggle{
+        display:inline-flex;
+      }
+      .mobile-panel{
+        display:block;
+      }
+      .segmented{
+        grid-template-columns:1fr;
+      }
+      .range-grid{
+        grid-template-columns:1fr;
+      }
+      .topbar-inner{
+        justify-content:center;
+        text-align:center;
+      }
+      .topbar-contact{
+        justify-content:center;
+      }
+    }
+
+    @media (max-width: 640px){
+      body{padding-bottom:84px}
+      .container{width:min(100% - 1.2rem, 1180px)}
+      .brand img{height:48px}
+      .nav{padding:.85rem 0}
+      .hero-inner{
+        padding:3.2rem 0 2.4rem;
+      }
+      .hero-logo{
+        width:min(340px, 78vw);
+      }
+      .hero h1{
+        max-width:11ch;
+      }
+      .hero-visual{
+        min-height:320px;
+      }
+      .hero-visual .tv-hero{
+        width:52vw;
+        right:14%;
+      }
+      .hero-visual .ac-hero{
+        width:62vw;
+        right:-2%;
+      }
+      .section{
+        padding:4.3rem 0;
+      }
+      .form-shell,
+      .contact-form{
+        padding:1.05rem;
+      }
+      .finder-stage{
+        min-height:380px;
+      }
+      .scene-remote{
+        width:46%;
+      }
+      .sticker{
+        width:98px;
+        height:44px;
+      }
+      .contact-form .form-grid{
+        grid-template-columns:1fr;
+      }
+      .mobile-bar{
+        display:flex;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto}
+      *, *::before, *::after{
+        animation:none !important;
+        transition:none !important;
+      }
+      .reveal{
+        opacity:1;
+        transform:none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="topbar-note">Need a replacement remote? Order online or call our team.</div>
+      <div class="topbar-contact">
+        <a href="tel:1300000000">1300 000 000</a>
+        <a href="mailto:sales@remotecontrolco.com.au">sales@remotecontrolco.com.au</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="#top" aria-label="Remote Control Co. home">
+          <img src="https://i.postimg.cc/s2S11PRX/logo-removebg-preview.png" alt="Remote Control Co. logo" />
+        </a>
+
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="#order">Order Online</a>
+          <a href="#find-model">Find Your Model</a>
+          <a href="#range">TV & AC Remotes</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <a class="call-pill" href="tel:1300000000">Call to Order</a>
+
+        <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobileMenu" aria-label="Toggle menu">
+          <span></span>
+        </button>
+      </div>
+
+      <div class="mobile-panel" id="mobileMenu">
+        <div class="panel-inner">
+          <a href="#order">Order Online</a>
+          <a href="#find-model">Find Your Model</a>
+          <a href="#range">TV &amp; AC Remotes</a>
+          <a href="#contact">Contact</a>
+          <a href="tel:1300000000">Call 1300 000 000</a>
+          <a href="mailto:sales@remotecontrolco.com.au">sales@remotecontrolco.com.au</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="container hero-inner">
+        <div class="hero-copy reveal">
+          <img class="hero-logo" src="https://i.postimg.cc/s2S11PRX/logo-removebg-preview.png" alt="Remote Control Co." />
+          <h1>The simple way to replace your TV or air conditioner remote.</h1>
+          <p>Tell us the brand and model number of your unit or old remote, or call our team directly. We’ve been helping customers find the right replacement since 2012.</p>
+          <div class="cta-group">
+            <a class="btn primary" href="#order">Start Your Order</a>
+            <a class="btn secondary" href="tel:1300000000">Call 1300 000 000</a>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal">
+          <img class="ac-hero" src="https://i.postimg.cc/TPp7MwgR/AC-remote.png" alt="Replacement air conditioner remote" />
+          <img class="tv-hero" src="https://i.postimg.cc/x8Y3CTJ8/TV-remote.png" alt="Replacement TV remote" />
+        </div>
+      </div>
+    </section>
+
+    <section class="section order-section" id="order">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Order online</span>
+          <h2>Start with the brand and model.</h2>
+          <p>Choose what you need, enter the details, and we’ll help guide you to the correct replacement remote or wall holder.</p>
+        </div>
+
+        <div class="order-wrap reveal">
+          <div class="form-shell">
+            <div class="segmented" role="tablist" aria-label="Product type">
+              <button class="type-btn active" type="button" data-type="tv" aria-pressed="true">TV Remote</button>
+              <button class="type-btn" type="button" data-type="ac" aria-pressed="false">Air Conditioner Remote</button>
+              <button class="type-btn" type="button" data-type="holder" aria-pressed="false">Wall Holder</button>
+            </div>
+
+            <form id="orderForm" class="form-grid">
+              <input type="hidden" id="requestType" name="requestType" value="TV Remote">
+
+              <div class="field">
+                <label for="brandInput" id="brandLabel">TV brand</label>
+                <input id="brandInput" name="brand" type="text" list="brandList" placeholder="e.g. Samsung" required />
+              </div>
+
+              <div class="field">
+                <label for="modelInput" id="modelLabel">TV or remote model number</label>
+                <input id="modelInput" name="model" type="text" placeholder="e.g. UA55DU7700 or AA59-00602A" required />
+              </div>
+
+              <div class="field">
+                <label for="remoteInput" id="remoteLabel">Old remote model (optional)</label>
+                <input id="remoteInput" name="oldRemote" type="text" placeholder="If you have it, add it here" />
+              </div>
+
+              <div class="field">
+                <label for="notesInput">Extra notes (optional)</label>
+                <textarea id="notesInput" name="notes" placeholder="Tell us anything useful about the unit, buttons, or holder you need."></textarea>
+              </div>
+
+              <div class="form-foot">
+                <a class="helper-link" href="#find-model">Need help finding the model number?</a>
+                <button class="btn primary" type="submit">Get Matched</button>
+              </div>
+            </form>
+
+            <div class="response" id="orderResponse"></div>
+
+            <datalist id="brandList">
+              <option value="Samsung"></option>
+              <option value="LG"></option>
+              <option value="Sony"></option>
+              <option value="Panasonic"></option>
+              <option value="Hisense"></option>
+              <option value="TCL"></option>
+              <option value="Sharp"></option>
+              <option value="Philips"></option>
+              <option value="Daikin"></option>
+              <option value="Fujitsu"></option>
+              <option value="Mitsubishi Electric"></option>
+              <option value="Kelvinator"></option>
+            </datalist>
+          </div>
+
+          <div class="order-visual">
+            <div class="order-media" aria-hidden="true">
+              <img id="typeImage" src="https://i.postimg.cc/x8Y3CTJ8/TV-remote.png" alt="" />
+            </div>
+            <div class="order-copy">
+              <h3 id="typeTitle">TV remote replacements</h3>
+              <p id="typeDesc">Match the TV brand and model, or the model from the old remote, and we’ll point you in the right direction fast.</p>
+              <a class="helper-link" href="#contact">Prefer to order by phone? Call us now.</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="find-model">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Need help?</span>
+          <h2>Where to find the model number.</h2>
+          <p>The quickest way to get the correct replacement is to send the brand plus the model from the unit or the old remote.</p>
+        </div>
+
+        <div class="help-layout reveal">
+          <div class="finder-stage" aria-hidden="true">
+            <div class="scene active" data-scene="tv">
+              <div class="tv-frame">
+                <div class="tv-screen"></div>
+              </div>
+              <div class="tv-stand"></div>
+              <div class="tv-base"></div>
+              <div class="sticker tv-sticker"></div>
+              <img class="scene-remote" src="https://i.postimg.cc/x8Y3CTJ8/TV-remote.png" alt="" />
+              <div class="scene-callout" id="sceneCallout">Most TV model numbers are on a sticker on the rear panel or side edge.</div>
+            </div>
+
+            <div class="scene" data-scene="ac">
+              <div class="ac-unit"></div>
+              <div class="ac-vent"></div>
+              <div class="sticker ac-sticker"></div>
+              <img class="scene-remote" src="https://i.postimg.cc/TPp7MwgR/AC-remote.png" alt="" />
+              <div class="scene-callout">Air conditioner model labels are often on the indoor unit side or under the front flap.</div>
+            </div>
+          </div>
+
+          <div class="help-text">
+            <div class="help-controls">
+              <button class="help-btn active" type="button" data-help="tv">For TVs</button>
+              <button class="help-btn" type="button" data-help="ac">For Air Conditioners</button>
+            </div>
+
+            <h3 id="helpTitle">For TVs</h3>
+            <p id="helpIntro">Check the back of the TV first. If it’s easier, send the model printed on the old remote as well.</p>
+
+            <ul class="help-list" id="helpList">
+              <li><span class="num">1</span><span>Look for the product sticker on the rear panel or side edge of the TV.</span></li>
+              <li><span class="num">2</span><span>Copy the full model code, not just the screen size.</span></li>
+              <li><span class="num">3</span><span>If you still have the old remote, its model number can help confirm the match.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section range-section" id="range">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">What we sell</span>
+          <h2>Replacement remotes and AC wall holders without the clutter.</h2>
+          <p>A simple range focused on the items customers ask for most: TV remotes, air conditioner remotes, and holders for AC remotes.</p>
+        </div>
+
+        <div class="range-grid reveal">
+          <article class="range-item">
+            <div class="range-figure">
+              <img src="https://i.postimg.cc/x8Y3CTJ8/TV-remote.png" alt="Replacement TV remote" />
+            </div>
+            <h3>TV Remotes</h3>
+            <p>Replacement remotes for leading television brands and older models that are harder to find in stores.</p>
+            <a href="#order" data-select-type="tv">Order a TV remote</a>
+          </article>
+
+          <article class="range-item">
+            <div class="range-figure">
+              <img src="https://i.postimg.cc/TPp7MwgR/AC-remote.png" alt="Replacement air conditioner remote" />
+            </div>
+            <h3>Air Conditioner Remotes</h3>
+            <p>Find the right AC remote faster by sending the brand and model from the indoor unit or the old remote.</p>
+            <a href="#order" data-select-type="ac">Order an AC remote</a>
+          </article>
+
+          <article class="range-item">
+            <div class="range-figure">
+              <img src="https://i.postimg.cc/NfRvSNYH/57.webp" alt="Wall holder for air conditioner remote" />
+            </div>
+            <h3>Wall Holders for AC Remotes</h3>
+            <p>Keep your air conditioner remote in one place with wall holders designed for everyday convenience.</p>
+            <a href="#order" data-select-type="holder">Order a wall holder</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section experience" id="experience">
+      <div class="container">
+        <div class="experience-wrap reveal">
+          <div class="stack-stage" aria-hidden="true">
+            <img class="img-main" src="https://i.postimg.cc/QdfJ03Bg/image1.png" alt="" />
+            <img class="img-alt" src="https://i.postimg.cc/NfRvSNYH/57.webp" alt="" />
+          </div>
+
+          <div class="experience-copy">
+            <div class="years"><span id="yearsCount" data-years="14">0</span><small>+ years</small></div>
+            <h2>Helping customers replace remotes since 2012.</h2>
+            <p>We know what details matter when matching the right remote. Whether it’s a common TV replacement, a specific air conditioner remote, or a wall holder for daily use, our team can help you get it right faster.</p>
+            <div class="cta-group" style="margin-top:1.4rem">
+              <a class="btn secondary" href="tel:1300000000">Talk to Our Team</a>
+              <a class="btn primary" href="#order">Order Online</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contact" id="contact">
+      <div class="container">
+        <div class="contact-wrap reveal">
+          <div class="contact-copy">
+            <img class="contact-lockup" src="https://i.postimg.cc/s2S11PRX/logo-removebg-preview.png" alt="Remote Control Co. logo" />
+            <h2>Get in touch.</h2>
+            <p>Have your brand and model ready and we can help by phone or email. If you prefer, send us a quick message below and we’ll prepare the details for you.</p>
+
+            <div class="direct-links">
+              <a href="tel:1300000000">
+                <span>Phone</span>
+                1300 000 000
+              </a>
+              <a href="mailto:sales@remotecontrolco.com.au">
+                <span>Email</span>
+                sales@remotecontrolco.com.au
+              </a>
+            </div>
+
+            <p>Two simple ways to order: use the website form above, or call us directly.</p>
+          </div>
+
+          <div class="contact-form">
+            <h3>Send a quick enquiry</h3>
+            <form id="contactForm" class="form-grid">
+              <div class="field">
+                <label for="contactName">Name</label>
+                <input id="contactName" name="name" type="text" placeholder="Your name" required />
+              </div>
+              <div class="field">
+                <label for="contactEmail">Email</label>
+                <input id="contactEmail" name="email" type="email" placeholder="you@example.com" required />
+              </div>
+              <div class="field full">
+                <label for="contactSubject">Subject</label>
+                <input id="contactSubject" name="subject" type="text" placeholder="TV remote, AC remote, or wall holder" required />
+              </div>
+              <div class="field full">
+                <label for="contactMessage">Message</label>
+                <textarea id="contactMessage" name="message" placeholder="Include the brand and model number if you have it."></textarea>
+              </div>
+              <div class="form-foot">
+                <span class="helper-link">We’ll help you find the right fit.</span>
+                <button class="btn primary" type="submit">Prepare Email</button>
+              </div>
+            </form>
+            <div class="contact-response" id="contactResponse"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="https://i.postimg.cc/s2S11PRX/logo-removebg-preview.png" alt="Remote Control Co." />
+          <p>Replacement TV remotes, air conditioner remotes, and AC remote wall holders for customers across Australia. Simple ordering, clear contact details, and experienced help since 2012.</p>
+        </div>
+
+        <div>
+          <h3 class="footer-title">Quick links</h3>
+          <div class="footer-links">
+            <a href="#order">Order Online</a>
+            <a href="#find-model">How to Find the Model</a>
+            <a href="#range">What We Sell</a>
+            <a href="#contact">Contact Us</a>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="footer-title">Contact</h3>
+          <div class="footer-contact">
+            <a href="tel:1300000000">1300 000 000</a>
+            <a href="mailto:sales@remotecontrolco.com.au">sales@remotecontrolco.com.au</a>
+            <div class="footer-meta">Australia-wide service</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-meta">© 2026 Remote Control Co. All rights reserved Developed by Zannatul.</div>
+        <div class="footer-meta">Trusted since 2012</div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="mobile-bar">
+    <a class="btn secondary" href="tel:1300000000">Call</a>
+    <a class="btn primary" href="#order">Start Order</a>
+  </div>
+
+  <script>
+    const phoneDisplay = "1300 000 000";
+    const phoneHref = "1300000000";
+    const emailAddress = "sales@remotecontrolco.com.au";
+
+    const header = document.getElementById("siteHeader");
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    window.addEventListener("scroll", () => {
+      header.classList.toggle("scrolled", window.scrollY > 8);
+    });
+
+    menuToggle.addEventListener("click", () => {
+      const open = mobileMenu.classList.toggle("open");
+      menuToggle.classList.toggle("active", open);
+      menuToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+
+    mobileMenu.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        mobileMenu.classList.remove("open");
+        menuToggle.classList.remove("active");
+        menuToggle.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    const orderTypes = {
+      tv: {
+        requestType: "TV Remote",
+        title: "TV remote replacements",
+        desc: "Match the TV brand and model, or the model from the old remote, and we’ll point you in the right direction fast.",
+        brandLabel: "TV brand",
+        brandPlaceholder: "e.g. Samsung",
+        modelLabel: "TV or remote model number",
+        modelPlaceholder: "e.g. UA55DU7700 or AA59-00602A",
+        remoteLabel: "Old remote model (optional)",
+        notesPlaceholder: "Tell us anything useful about the TV or buttons you need.",
+        image: "https://i.postimg.cc/x8Y3CTJ8/TV-remote.png"
+      },
+      ac: {
+        requestType: "Air Conditioner Remote",
+        title: "Air conditioner remote replacements",
+        desc: "Send the air conditioner brand plus the indoor unit or remote model and we’ll help narrow down the correct replacement.",
+        brandLabel: "Air conditioner brand",
+        brandPlaceholder: "e.g. Daikin",
+        modelLabel: "Unit or remote model number",
+        modelPlaceholder: "e.g. FTXS25 or ARC433A21",
+        remoteLabel: "Old remote model (optional)",
+        notesPlaceholder: "Tell us anything useful about the AC unit or remote.",
+        image: "https://i.postimg.cc/TPp7MwgR/AC-remote.png"
+      },
+      holder: {
+        requestType: "Wall Holder",
+        title: "Wall holders for AC remotes",
+        desc: "If you need a holder for your AC remote, send the brand and remote model if known so we can help with the best fit.",
+        brandLabel: "Air conditioner brand",
+        brandPlaceholder: "e.g. Mitsubishi Electric",
+        modelLabel: "Remote model or holder reference",
+        modelPlaceholder: "e.g. RKX502A001 or wall holder size",
+        remoteLabel: "Current remote model (optional)",
+        notesPlaceholder: "Tell us anything useful about the holder or remote shape.",
+        image: "https://i.postimg.cc/NfRvSNYH/57.webp"
+      }
+    };
+
+    let activeType = "tv";
+
+    const typeButtons = document.querySelectorAll(".type-btn");
+    const requestTypeInput = document.getElementById("requestType");
+    const brandLabel = document.getElementById("brandLabel");
+    const modelLabel = document.getElementById("modelLabel");
+    const remoteLabel = document.getElementById("remoteLabel");
+    const brandInput = document.getElementById("brandInput");
+    const modelInput = document.getElementById("modelInput");
+    const notesInput = document.getElementById("notesInput");
+    const typeTitle = document.getElementById("typeTitle");
+    const typeDesc = document.getElementById("typeDesc");
+    const typeImage = document.getElementById("typeImage");
+
+    function setOrderType(type) {
+      activeType = type;
+      const data = orderTypes[type];
+
+      typeButtons.forEach(btn => {
+        const isActive = btn.dataset.type === type;
+        btn.classList.toggle("active", isActive);
+        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+
+      requestTypeInput.value = data.requestType;
+      brandLabel.textContent = data.brandLabel;
+      modelLabel.textContent = data.modelLabel;
+      remoteLabel.textContent = data.remoteLabel;
+      brandInput.placeholder = data.brandPlaceholder;
+      modelInput.placeholder = data.modelPlaceholder;
+      notesInput.placeholder = data.notesPlaceholder;
+      typeTitle.textContent = data.title;
+      typeDesc.textContent = data.desc;
+
+      typeImage.style.opacity = "0";
+      typeImage.style.transform = "translateY(10px)";
+      setTimeout(() => {
+        typeImage.src = data.image;
+        typeImage.style.opacity = "1";
+        typeImage.style.transform = "translateY(0)";
+      }, 140);
+    }
+
+    typeButtons.forEach(button => {
+      button.addEventListener("click", () => setOrderType(button.dataset.type));
+    });
+
+    document.querySelectorAll("[data-select-type]").forEach(link => {
+      link.addEventListener("click", (event) => {
+        setOrderType(link.dataset.selectType);
+      });
+    });
+
+    const orderForm = document.getElementById("orderForm");
+    const orderResponse = document.getElementById("orderResponse");
+
+    orderForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const brand = brandInput.value.trim();
+      const model = modelInput.value.trim();
+      const oldRemote = document.getElementById("remoteInput").value.trim();
+      const notes = notesInput.value.trim();
+      const typeName = orderTypes[activeType].requestType;
+
+      const summary = [
+        `Product type: ${typeName}`,
+        `Brand: ${brand}`,
+        `Model: ${model}`,
+        oldRemote ? `Old remote model: ${oldRemote}` : "",
+        notes ? `Extra notes: ${notes}` : ""
+      ].filter(Boolean).join("\n");
+
+      const subject = encodeURIComponent(`${typeName} enquiry from website`);
+      const body = encodeURIComponent(`Hi Remote Control Co.,\n\nI need help with the following:\n\n${summary}\n\nPlease contact me with the best option.\n`);
+      const mailto = `mailto:${emailAddress}?subject=${subject}&body=${body}`;
+
+      orderResponse.innerHTML = `
+        <strong>Ready to send.</strong>
+        We’ve prepared your ${typeName.toLowerCase()} details for <strong>${brand}</strong> / <strong>${model}</strong>.
+        <div class="response-actions">
+          <a class="btn primary small" href="${mailto}">Email These Details</a>
+          <a class="btn secondary small" href="tel:${phoneHref}">Call ${phoneDisplay}</a>
+        </div>
+      `;
+      orderResponse.classList.add("show");
+    });
+
+    const helpData = {
+      tv: {
+        title: "For TVs",
+        intro: "Check the back of the TV first. If it’s easier, send the model printed on the old remote as well.",
+        items: [
+          "Look for the product sticker on the rear panel or side edge of the TV.",
+          "Copy the full model code, not just the screen size.",
+          "If you still have the old remote, its model number can help confirm the match."
+        ]
+      },
+      ac: {
+        title: "For Air Conditioners",
+        intro: "Use the model from the indoor unit or the old remote so we can help match the correct replacement faster.",
+        items: [
+          "Check the side of the indoor unit or under the front flap for the product label.",
+          "Take a clear photo if the unit is mounted high up.",
+          "If the old remote is available, the model on the back label is also useful."
+        ]
+      }
+    };
+
+    const helpButtons = document.querySelectorAll(".help-btn");
+    const helpTitle = document.getElementById("helpTitle");
+    const helpIntro = document.getElementById("helpIntro");
+    const helpList = document.getElementById("helpList");
+    const scenes = document.querySelectorAll(".scene");
+
+    function setHelpMode(mode) {
+      helpButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.help === mode));
+      scenes.forEach(scene => scene.classList.toggle("active", scene.dataset.scene === mode));
+
+      const data = helpData[mode];
+      helpTitle.textContent = data.title;
+      helpIntro.textContent = data.intro;
+      helpList.innerHTML = data.items.map((item, index) => `
+        <li><span class="num">${index + 1}</span><span>${item}</span></li>
+      `).join("");
+    }
+
+    helpButtons.forEach(button => {
+      button.addEventListener("click", () => setHelpMode(button.dataset.help));
+    });
+
+    const contactForm = document.getElementById("contactForm");
+    const contactResponse = document.getElementById("contactResponse");
+
+    contactForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const name = document.getElementById("contactName").value.trim();
+      const email = document.getElementById("contactEmail").value.trim();
+      const subjectText = document.getElementById("contactSubject").value.trim();
+      const message = document.getElementById("contactMessage").value.trim();
+
+      const subject = encodeURIComponent(`Website enquiry: ${subjectText}`);
+      const body = encodeURIComponent(
+        `Hi Remote Control Co.,\n\nName: ${name}\nEmail: ${email}\nSubject: ${subjectText}\n\nMessage:\n${message}\n`
+      );
+      const mailto = `mailto:${emailAddress}?subject=${subject}&body=${body}`;
+
+      contactResponse.innerHTML = `
+        <strong>Your message is ready.</strong>
+        Use the button below to send it by email, or call us directly if you’d like faster help.
+        <div class="response-actions">
+          <a class="btn primary small" href="${mailto}">Send Email</a>
+          <a class="btn secondary small" href="tel:${phoneHref}">Call ${phoneDisplay}</a>
+        </div>
+      `;
+      contactResponse.classList.add("show");
+    });
+
+    const revealElements = document.querySelectorAll(".reveal");
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("revealed");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.16 });
+
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    const yearsEl = document.getElementById("yearsCount");
+    const targetYears = new Date().getFullYear() - 2012;
+    yearsEl.dataset.years = targetYears;
+
+    let yearsAnimated = false;
+    const yearsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !yearsAnimated) {
+          yearsAnimated = true;
+          const duration = 1400;
+          const start = performance.now();
+
+          function animateCount(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            yearsEl.textContent = Math.round(eased * targetYears);
+            if (progress < 1) {
+              requestAnimationFrame(animateCount);
+            }
+          }
+          requestAnimationFrame(animateCount);
+          yearsObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.45 });
+
+    yearsObserver.observe(yearsEl);
+
+    setOrderType("tv");
+    setHelpMode("tv");
+  </script>
+</body>
+</html>
